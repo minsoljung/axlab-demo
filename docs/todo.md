@@ -3,11 +3,14 @@
 갱신: 2026-11-25 · 상태 값: `todo` · `doing` · `done` · `blocked`
 정본: 이 파일. 설계 정본: `docs/project-init.md`.
 
-## 브랜치·형상관리 규약 (2026-11-25 사용자 지시)
+## 브랜치·형상관리·배포 규약 (2026-11-25 사용자 지시, 같은 날 개정)
 
 - 원격: GitHub `minsoljung/axlab-demo`(public). 기본 브랜치 = `develop`.
 - 보호 브랜치: `production` · `staging` · `develop` — 직접 push·강제 push·삭제 금지, PR 필수(승인 수 0, 관리자 포함). 서버가 거부한다.
-- 작업 브랜치: `feature/<주제>` 에서 작업 → `develop` 으로 PR → 머지. 승격 순서 `develop` → `staging` → `production`(PR).
+- 🔴 **`staging`·`production` 은 당분간 사용하지 않는다**(사용자 지시). 승격 PR 을 만들지 않는다. 브랜치·보호 규칙은 그대로 둔다.
+- 작업 흐름: `feature/<주제>` 에서 작업 → `develop` 으로 PR → 머지.
+- 배포(Vercel, 프로젝트 `sol-7dc2/axlab-demo`): **Vercel 운영 브랜치 = `develop`** — `develop` 에 머지되면 운영 주소 https://axlab-demo.vercel.app 이 갱신된다. `feature/*` 브랜치·PR 은 미리보기 배포(Vercel 로그인 필요).
+- DB: Supabase(PostgreSQL 만, 도쿄) 하나를 운영·미리보기가 공유한다. 로컬은 Docker PostgreSQL(`scripts/db-up.sh`). 운영 연결·환경변수 설정 = `scripts/deploy-setup.sh`.
 - 커밋 메시지: `[<user.name>] <type>(<scope>): <설명>`. 신원은 `--local` 만(글로벌 gitconfig 수정 금지). 이 repo 의 user.name = `minsoljung`, 이메일 = GitHub noreply.
 - 🔴 public repo — 비밀값·접속 문자열·개인 경로를 커밋하지 않는다. `.env*` 는 `.env.example`(이름만) 외 git 제외.
 
@@ -52,7 +55,7 @@
 | # | 작업 | 상태 | 비고 |
 |---|---|---|---|
 | E-1 | `.gitignore` | done | |
-| E-2 | git 신원(`--local`)·브랜치·remote 결정 + 첫 커밋 | blocked | `.git/` 은 이미 있음(커밋 0건·remote 없음·user.name 미설정). 사용자 결정 대기(RESUME G-1) |
+| E-2 | git 신원(`--local`)·브랜치·remote + 첫 커밋 | done | GitHub public `minsoljung/axlab-demo`, 보호 브랜치 3·작업 브랜치 `feature/*`, 서버가 develop 직접 push 거부 확인, PR #1~#4 머지. 위 규약 절 참조 |
 | E-3 | 기술 스택 스캐폴딩: Next.js + TypeScript + Prisma + Vitest + Playwright + **npm** | todo | 한 바퀴 방침으로 H-6 승인 전 착수. 패키지 매니저 pnpm→npm 변경(pnpm 은 내 가정이었고 머신에 없음) — `scripts/e2e-run.sh`·`check-env.sh` 등 pnpm 참조는 한 바퀴 뒤 정리(이월) |
 | E-4 | 로컬 PostgreSQL | done | 사용자 결정 2026-11-25(2차): brew PostgreSQL 은 **삭제**(formula·데이터 디렉터리 80M·서비스 없음 확인), **Docker PostgreSQL 17** 로 전환. 컨테이너 `axlab-demo-pg`(`scripts/db-up.sh up|reset|down|status` — 두 번 실행해도 같은 결과 확인), `127.0.0.1:54329`, DB 3개(`axlab_demo`·`axlab_demo_test`·`axlab_demo_unit`) 마이그레이션 `20261125062850_init` 적용·테이블 각 8. `.env`·`.env.test`·`.env.unit` 의 URL 을 새 주소로 변경(git 제외 파일). Docker Desktop 4.99.0 은 사용자가 sudo 단계를 pane 에서 설치. 주의: Docker Desktop 앱이 켜져 있어야 DB 가 뜬다(재부팅 후 앱 실행 + `db-up.sh up`) · `e2e-run.sh`·`check-env.sh` 의 pnpm 서술은 이월 |
 | E-5 | `.env.example` 작성 (값 없이 이름만) | todo | |
