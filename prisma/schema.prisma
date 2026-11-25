@@ -1,0 +1,93 @@
+// Prisma 7: datasource 에 url 을 두지 않는다. 연결 문자열은 prisma.config.ts(마이그레이션, DIRECT_URL)와
+// src/lib/db.ts 의 driver adapter(런타임, DATABASE_URL)에서 읽는다. directUrl 은 v7 에서 제거됐다.
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum MetricKind {
+  page_view
+  form_open
+  apply_complete
+}
+
+model Carrier {
+  id     String  @id
+  name   String  @unique
+  events Event[]
+}
+
+model Event {
+  id            String    @id @default(cuid())
+  title         String
+  content       String
+  carrierId     String
+  carrier       Carrier   @relation(fields: [carrierId], references: [id])
+  startsAt      DateTime
+  endsAt        DateTime
+  // 수동 종료 처리일 (null = 수동 종료 없음). 재개 없음 (A-21)
+  closedAt      DateTime?
+  // P-02 응모 개인정보 삭제 기준일 = min(종료 예정일, 수동 종료 처리일). 종료가 확정될 때 고정(A-17·A-21). 삭제일 = 기준일 + 90일
+  purgeBaseDate DateTime?
+  createdAt     DateTime  @default(now())
+  entries       Entry[]
+
+  @@index([carrierId])
+}
+
+// 응모 정보 (P-01: 이름·휴대전화번호·동의). 방문자 ID 필드를 두지 않는다 (P-07: 익명 방문자 ID 와 비연결)
+model Entry {
+  id        String   @id @default(cuid())
+  eventId   String
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  name      String
+  phone     String
+  consentAt DateTime
+  createdAt DateTime @default(now())
+
+  // P-03: 같은 이벤트에 같은 휴대전화번호는 1회
+  @@unique([eventId, phone])
+}
+
+// 원시 지표 이벤트 로그 (P-07). 응모 레코드 식별자·이름·휴대전화번호 필드를 두지 않는다. 외래키 없음
+model MetricEvent {
+  id           String     @id @default(cuid())
+  kind         MetricKind
+  eventId      String?
+  visitorId    String
+  isAdmin      Boolean    @default(false)
+  occurredAt   DateTime
+  // 이 로그가 일 집계·월 확정·이벤트 확정에 반영됐는지 (삭제는 집계 완료분만)
+  aggregatedAt DateTime?
+
+  @@index([occurredAt])
+}
+
+// 방문자 ID 를 담지 않는 집계 3종 (prd §2-4)
+model DailyMetric {
+  day            DateTime
+  eventId        String
+  kind           MetricKind
+  count          Int
+  uniqueVisitors Int
+
+  @@id([day, eventId, kind])
+}
+
+model MonthlyVisitors {
+  month          String @id
+  uniqueVisitors Int
+}
+
+model EventMetricSummary {
+  eventId           String   @id
+  pageViewVisitors  Int
+  completeVisitors  Int
+  durationsSeconds  Int[]
+  isFinal           Boolean  @default(false)
+  updatedAt         DateTime @updatedAt
+}
