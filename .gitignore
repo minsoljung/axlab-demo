@@ -1,24 +1,29 @@
+# 🔴 public repo — 비밀값·접속 문자열·개인 경로를 커밋하지 않는다.
+
 # 의존성
 node_modules/
 .pnpm-store/
 
-# 빌드 산출물
+# 빌드 산출물·생성 코드
 .next/
+.next-test/
 out/
 dist/
 build/
 *.tsbuildinfo
 next-env.d.ts
+.turbo/
+.eslintcache
 src/generated/
 
-# Python 캐시 (hooks·scripts)
-__pycache__/
-*.pyc
-
-# 환경변수·비밀값 (값은 repo 에 넣지 않는다)
+# 환경변수·비밀값 (값은 repo 에 넣지 않는다. 예시는 이름만 적은 .env.example)
 .env
 .env.*
 !.env.example
+*.pem
+*.key
+*.p12
+id_rsa*
 
 # 테스트 산출물
 coverage/
@@ -27,12 +32,17 @@ playwright-report/
 blob-report/
 playwright/.cache/
 
-# Vercel
+# 배포 서비스 로컬 연결 정보
 .vercel/
+supabase/.temp/
 
 # 로컬 DB (Docker PostgreSQL 볼륨)
 pgdata/
 .docker-data/
+
+# Python 캐시 (hooks·scripts)
+__pycache__/
+*.pyc
 
 # 로그
 *.log
@@ -48,7 +58,3 @@ pnpm-debug.log*
 # Claude Code 로컬 전용 (agents·skills·hooks·settings.json 은 추적한다)
 .claude/settings.local.json
 .claude/worktrees/
-
-# 테스트 서버 빌드 산출물·생성 코드
-.next-test/
-src/generated/
