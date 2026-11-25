@@ -1,0 +1,17 @@
+# Vercel 배포에 올리지 않는 것 (빌드는 Vercel 이 npm install 로 새로 한다)
+node_modules
+.next
+.next-test
+test-results
+playwright-report
+blob-report
+coverage
+.vercel
+supabase/.temp
+.env
+.env.*
+!.env.example
+# 앱 빌드에 필요 없는 개발용 문서·테스트·하네스
+docs
+e2e
+.claude

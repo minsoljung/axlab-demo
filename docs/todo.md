@@ -3,6 +3,14 @@
 갱신: 2026-11-25 · 상태 값: `todo` · `doing` · `done` · `blocked`
 정본: 이 파일. 설계 정본: `docs/project-init.md`.
 
+## 브랜치·형상관리 규약 (2026-11-25 사용자 지시)
+
+- 원격: GitHub `minsoljung/axlab-demo`(public). 기본 브랜치 = `develop`.
+- 보호 브랜치: `production` · `staging` · `develop` — 직접 push·강제 push·삭제 금지, PR 필수(승인 수 0, 관리자 포함). 서버가 거부한다.
+- 작업 브랜치: `feature/<주제>` 에서 작업 → `develop` 으로 PR → 머지. 승격 순서 `develop` → `staging` → `production`(PR).
+- 커밋 메시지: `[<user.name>] <type>(<scope>): <설명>`. 신원은 `--local` 만(글로벌 gitconfig 수정 금지). 이 repo 의 user.name = `minsoljung`, 이메일 = GitHub noreply.
+- 🔴 public repo — 비밀값·접속 문자열·개인 경로를 커밋하지 않는다. `.env*` 는 `.env.example`(이름만) 외 git 제외.
+
 ## 진행 방침 (사용자 지시 2026-11-25: 기획 → 디자인 → 개발 → 검증을 빠르게 한 바퀴 돈다)
 
 - 목적 = 한 바퀴를 빨리 돌려 하네스·절차를 실물로 검증한다. 문서·하네스 완성도 다듬기가 아니다.
