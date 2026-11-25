@@ -7,7 +7,7 @@ export const dynamic = "force-dynamic";
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }): Promise<Response> {
   const hooked = await applyHooks(new URL(req.url).pathname);
   if (hooked) return hooked;
-  const denied = requireAdmin(req);
+  const denied = await requireAdmin(req);
   if (denied) return denied;
   const { id } = await params;
   const body = (await req.json().catch(() => null)) as Record<string, unknown> | null;

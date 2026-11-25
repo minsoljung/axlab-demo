@@ -14,16 +14,16 @@ vi.mock("next/navigation", () => ({ redirect: (u: string) => redirect(u) }));
 
 import { requireAdminPage } from "./adminGuard";
 
-beforeEach(() => {
-  clearSessions();
+beforeEach(async () => {
+  await clearSessions();
   setAdminCodeOverride("c1");
   cookieValue = undefined;
   redirect.mockClear();
 });
-afterEach(() => {
+afterEach(async () => {
   setClock(null);
   setAdminCodeOverride(null);
-  clearSessions();
+  await clearSessions();
 });
 
 describe("AC-008-4·AC-008-5·AC-008-20 미확인 세션이 SCR-06·07 에 직접 들어가면 SCR-05(안내 포함)로 보낸다", () => {
@@ -33,7 +33,7 @@ describe("AC-008-4·AC-008-5·AC-008-20 미확인 세션이 SCR-06·07 에 직�
 });
 describe("AC-008-2 확인한 세션은 통과한다", () => {
   it("유효한 세션 → 리다이렉트 없음", async () => {
-    cookieValue = createSession();
+    cookieValue = await createSession();
     await requireAdminPage();
     expect(redirect).not.toHaveBeenCalled();
   });
@@ -42,12 +42,12 @@ describe("AC-008-9·AC-008-12 만료·코드 변경 세션은 SCR-05 로 보낸�
   it("31분 뒤", async () => {
     const t = Date.now();
     setClock(new Date(t).toISOString());
-    cookieValue = createSession();
+    cookieValue = await createSession();
     setClock(new Date(t + 31 * 60_000).toISOString());
     await expect(requireAdminPage()).rejects.toThrow("REDIRECT:/admin?notice=1");
   });
   it("코드 변경 뒤", async () => {
-    cookieValue = createSession();
+    cookieValue = await createSession();
     setAdminCodeOverride("c2");
     await expect(requireAdminPage()).rejects.toThrow("REDIRECT:/admin?notice=1");
   });

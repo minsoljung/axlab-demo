@@ -26,7 +26,7 @@ export function codeMatches(input: unknown): boolean {
 }
 
 // 관리자 API 맨 앞에서 부른다. 통과하면 null, 아니면 401(P-05).
-export function requireAdmin(req: Request): Response | null {
-  const state: SessionState = checkSession(readSessionId(req));
+export async function requireAdmin(req: Request): Promise<Response | null> {
+  const state: SessionState = await checkSession(readSessionId(req));
   return state === "ok" ? null : Response.json({ error: "unauthorized", reason: state }, { status: 401 });
 }

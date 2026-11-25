@@ -45,6 +45,7 @@ export async function resetAndSeed(prisma: PrismaClient, seed: string): Promise<
     prisma.entry.deleteMany(),
     prisma.event.deleteMany(),
     prisma.carrier.deleteMany(),
+    prisma.adminSession.deleteMany(),
   ]);
   await prisma.carrier.createMany({ data: CARRIERS });
   if (seed === "empty") return;

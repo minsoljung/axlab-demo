@@ -40,3 +40,11 @@ describe("TH-seed default 시드: 통신사 3곳 + 통신사별 진행 중 이�
     await expect(resetAndSeed(prisma, "nope")).rejects.toThrow();
   });
 });
+
+describe("TH-reset 초기화는 관리자 세션 테이블도 비운다 (AC-008 세션이 DB 에 있으므로)", () => {
+  it.each(["default", "empty", "carrier-c-empty"])("%s 시드 뒤 세션 0건", async (seed) => {
+    await prisma.adminSession.create({ data: { id: "x", createdAt: new Date(), lastAt: new Date(), codeHash: "h" } });
+    await resetAndSeed(prisma, seed);
+    expect(await prisma.adminSession.count()).toBe(0);
+  });
+});
