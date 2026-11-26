@@ -9,5 +9,5 @@ export const NOTICE_URL = "/admin?notice=1";
 // SCR-06·07 서버 페이지 맨 앞에서 부른다. 세션이 없거나 만료·코드 변경이면 SCR-05 로 보낸다(A-16·A-22).
 export async function requireAdminPage(): Promise<void> {
   const jar = await cookies();
-  if (checkSession(jar.get(COOKIE)?.value) !== "ok") redirect(NOTICE_URL);
+  if ((await checkSession(jar.get(COOKIE)?.value)) !== "ok") redirect(NOTICE_URL);
 }

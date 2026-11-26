@@ -9,6 +9,7 @@ export async function clearDb() {
   await prisma.entry.deleteMany();
   await prisma.event.deleteMany();
   await prisma.carrier.deleteMany();
+  await prisma.adminSession.deleteMany();
 }
 
 export async function seedCarriers() {

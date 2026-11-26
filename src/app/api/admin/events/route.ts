@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 export async function GET(req: Request): Promise<Response> {
   const hooked = await applyHooks(new URL(req.url).pathname);
   if (hooked) return hooked;
-  const denied = requireAdmin(req);
+  const denied = await requireAdmin(req);
   if (denied) return denied;
   const [events, carriers] = await Promise.all([
     listEvents(),
@@ -21,7 +21,7 @@ export async function GET(req: Request): Promise<Response> {
 export async function POST(req: Request): Promise<Response> {
   const hooked = await applyHooks(new URL(req.url).pathname);
   if (hooked) return hooked;
-  const denied = requireAdmin(req);
+  const denied = await requireAdmin(req);
   if (denied) return denied;
   const body = (await req.json().catch(() => null)) as Record<string, unknown> | null;
   if (!body || typeof body !== "object") return Response.json({ error: "bad_request" }, { status: 400 });

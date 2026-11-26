@@ -30,13 +30,13 @@ const count = () => prisma.event.count();
 
 beforeEach(async () => {
   resetHooks();
-  clearSessions();
+  await clearSessions();
   setAdminCodeOverride(CODE);
   await resetAndSeed(prisma, "default");
 });
 afterAll(async () => {
   resetHooks();
-  clearSessions();
+  await clearSessions();
   await clearDb();
   await prisma.$disconnect();
 });

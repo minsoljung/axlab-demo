@@ -91,3 +91,12 @@ model EventMetricSummary {
   isFinal           Boolean  @default(false)
   updatedAt         DateTime @updatedAt
 }
+
+// 관리자 세션(P-05·A-22). 서버리스 인스턴스가 달라도 세션이 유지되도록 DB 에 둔다.
+// id = 쿠키 토큰의 sha256(토큰 평문은 저장하지 않는다) · codeHash = 생성 시 접근 코드의 sha256(코드 평문은 저장하지 않는다)
+model AdminSession {
+  id        String   @id
+  createdAt DateTime
+  lastAt    DateTime
+  codeHash  String
+}
